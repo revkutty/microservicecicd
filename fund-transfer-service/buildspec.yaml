@@ -11,7 +11,10 @@ phases:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - echo Granting execution permissions to Gradle wrapper...
-      - echo Cleaning up previous builds...
+      - echo "Setting executable permissions for Gradlew scripts..."
+      - chmod +x user-management-service/gradlew
+      - chmod +x account-service/gradlew
+      - chmod +x fund-transfer-service/gradlew
       - echo "Running Gradle build for all microservices..."
       - cd user-management-service && ./gradlew clean build && cd ..
       - cd account-service && ./gradlew clean build && cd ..
