@@ -12,7 +12,10 @@ phases:
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - echo Granting execution permissions to Gradle wrapper...
       - echo Cleaning up previous builds...
-      - .gradlew clean build
+      - echo "Running Gradle build for all microservices..."
+      - cd user-management-service && ./gradlew clean build && cd ..
+      - cd account-service && ./gradlew clean build && cd ..
+      - cd fund-transfer-service && ./gradlew clean build && cd ..
 
 
   build:
@@ -35,6 +38,9 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
+    - user-management-service/build/libs/*
+    - account-service/build/libs/*
+    - fund-transfer-service/build/libs/*
   discard-paths: yes
 
 cache:
