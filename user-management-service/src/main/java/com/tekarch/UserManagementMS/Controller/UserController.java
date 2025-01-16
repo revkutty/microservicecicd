@@ -79,6 +79,18 @@ public class UserController {
 }
 
 
+/*
+/*
+ @DeleteMapping("/{userId}")
+    private ResponseEntity<String> deleteUser(@PathVariable Long userId)
+    {
+        boolean isDeleted = userProfileServiceImpl.deleteUserById(userId);
+        return isDeleted ? ResponseEntity.ok("user profile deleted successfully for user id: "+ userId) :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("user profile not found for id: "+userId);
+    }
+ */
+
+
 
    /* //GET /api/users/{id} – Retrieve users by ID.
     @GetMapping("/{id}")

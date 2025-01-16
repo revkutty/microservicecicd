@@ -30,6 +30,15 @@ public class AccountServiceController {
         this.restTemplate = restTemplate;
         this.accountService = accountService;
     }
+    /*
+     @Autowired
+    public AccountController(AccountServiceImpl accServiceImpl,
+                             @Value("${user.microservice.url}") String userMicroserviceUrl) {
+        this.accServiceImpl = accServiceImpl;
+       // this.userDto = userDto;
+        this.USER_MICROSERVICE_URL = userMicroserviceUrl;
+    }
+     */
 
     @GetMapping
     public List<Accounts> getAllAccounts() {
@@ -111,6 +120,7 @@ public class AccountServiceController {
             // Return the user details in the response
             return ResponseEntity.ok(userDetails);
         } catch (Exception e) {
+            // catch (HttpClientErrorException | HttpServerErrorException e)
             // Handle errors (e.g., user not found)
             return ResponseEntity.notFound().build();
         }
@@ -122,4 +132,5 @@ public class AccountServiceController {
     public ResponseEntity<?> respondWithError(Exception e){
         return new ResponseEntity<>("Exception Occurred:" + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
 }

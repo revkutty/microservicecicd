@@ -1,5 +1,7 @@
 # Use a lightweight base image with Java support
-FROM openjdk:17-jdk-alpine
+#FROM openjdk:17-jdk-alpine
+
+FROM amazoncorretto:17
 
 # Set the working directory
 WORKDIR /app
