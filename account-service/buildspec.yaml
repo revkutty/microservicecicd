@@ -9,9 +9,8 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
       - echo "Setting up build metadata..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=build-${COMMIT_HASH}
-      - echo "Commit Hash: $COMMIT_HASH"
-      - echo "Image Tag: $IMAGE_TAG"
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+
 
   build:
     commands:
@@ -28,6 +27,7 @@ phases:
       - echo "Generating imagedefinitions.json..."
       - printf '[{"name":"boacicdrepo","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo "Build and push completed successfully."
+
 
 artifacts:
   files:
