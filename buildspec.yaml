@@ -10,6 +10,10 @@ phases:
       - echo "Setting up build metadata..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - echo Granting execution permissions to Gradle wrapper...
+      - chmod +x ./gradlew
+      - echo Cleaning up previous builds...
+      - .gradlew clean build
 
 
   build:
