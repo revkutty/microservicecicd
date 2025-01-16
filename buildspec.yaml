@@ -6,7 +6,7 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - aws --version
       - REPOSITORY_URI=public.ecr.aws/a0s2e0f6/tekarch/boacicdrepo
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr get-login-password --region us-east-1 --debug | docker login --username AWS --password-stdin $REPOSITORY_URI
       - echo "Setting up build metadata..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
