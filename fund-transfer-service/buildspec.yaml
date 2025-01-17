@@ -3,6 +3,10 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo Logging into Docker Hub...
+      - DOCKER_PASSWORD=Winter@2025
+      - DOCKER_USERNAME=revkutty
+      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
       - echo "Logging in to Amazon ECR..."
       - aws --version
       - REPOSITORY_URI=061051230050.dkr.ecr.us-east-1.amazonaws.com/tekarch/boacicdrepo1
