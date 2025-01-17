@@ -11,10 +11,8 @@ phases:
       - aws --version
       - REPOSITORY_URI=061051230050.dkr.ecr.us-east-1.amazonaws.com/tekarch/boacicdrepo1
       - aws ecr get-login-password --region us-east-1 --debug | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - echo "Setting up build metadata..."
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - echo Granting execution permissions to Gradle wrapper...
+      - echo Cleaning up previous builds...
       - echo "Setting executable permissions for Gradlew scripts..."
       - chmod +x user-management-service/gradlew
       - chmod +x account-service/gradlew
@@ -27,19 +25,26 @@ phases:
 
   build:
     commands:
-      - echo "Building Docker images for all services..."
-      - docker-compose -f docker-compose.yml build
-      - echo "Tagging root image..."
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - # Build the user-management-service Docker image
+      - docker build -t user-management-service ./user-management-service
+      - # Build the account-service Docker image
+      - docker build -t account-service ./account-service
+      - # Build the fund-transfer-service Docker image
+      - docker build -t fund-transfer-service ./fund-transfer-service
+
 
   post_build:
     commands:
-      - echo "Pushing Docker images to Amazon ECR..."
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Generating imagedefinitions.json..."
-      - printf '[{"name":"boacicdrepo","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - echo "Build and push completed successfully."
+      # Tag the images with the repository URI
+      - docker tag user-management-service:latest $REPOSITORY_URI:user-management-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker tag account-service:latest $REPOSITORY_URI:account-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker tag fund-transfer-service:latest $REPOSITORY_URI:fund-transfer-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      # Create imagedefinitions.json file for ECS
+      - echo '[ { "name": "user-management-service", "imageUri": "'$REPOSITORY_URI':user-management-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, { "name": "account-service", "imageUri": "'$REPOSITORY_URI':account-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, { "name": "fund-transfer-service", "imageUri": "'$REPOSITORY_URI':fund-transfer-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" } ]' > imagedefinitions.json
+      # Push the images to ECR
+      - docker push $REPOSITORY_URI:user-management-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $REPOSITORY_URI:account-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $REPOSITORY_URI:fund-transfer-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
 
 
 artifacts:
