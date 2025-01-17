@@ -40,12 +40,16 @@ phases:
       - docker tag account-service:latest $REPOSITORY_URI:account-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker tag fund-transfer-service:latest $REPOSITORY_URI:fund-transfer-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
       # Create imagedefinitions.json file for ECS
-      - echo '[ { "name": "user-management-service", "imageUri": "'$REPOSITORY_URI':user-management-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, { "name": "account-service", "imageUri": "'$REPOSITORY_URI':account-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, { "name": "fund-transfer-service", "imageUri": "'$REPOSITORY_URI':fund-transfer-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" } ]' > imagedefinitions.json
+      - |
+        echo '[ 
+          { "name": "user-management-service", "imageUri": "'$REPOSITORY_URI':user-management-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, 
+          { "name": "account-service", "imageUri": "'$REPOSITORY_URI':account-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }, 
+          { "name": "fund-transfer-service", "imageUri": "'$REPOSITORY_URI':fund-transfer-service-'$CODEBUILD_RESOLVED_SOURCE_VERSION'" }
+        ]' > imagedefinitions.json
       # Push the images to ECR
       - docker push $REPOSITORY_URI:user-management-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker push $REPOSITORY_URI:account-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker push $REPOSITORY_URI:fund-transfer-service-$CODEBUILD_RESOLVED_SOURCE_VERSION
-
 
 artifacts:
   files:
